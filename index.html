@@ -6,11 +6,14 @@
 <title>Rutina de JP</title>
 <meta name="description" content="Rutina diaria de JP">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#121317">
+<meta name="theme-color" content="#0A0A0B">
+<meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rutina">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,81 +21,134 @@
 
 <header class="top">
   <div class="top-in">
-    <div class="brand">Rutina <span id="focoDia"></span></div>
-    <div class="stamp">
-      <div class="hh num" id="reloj">--:--</div>
-      <div class="dd" id="fecha">—</div>
+    <div class="ttl">
+      <div class="eyebrow">Rutina<span id="focoDia"></span></div>
+      <div class="today" id="fecha">—</div>
     </div>
+    <div class="clock num" id="reloj" aria-label="Hora en Ciudad de México">--:--</div>
+    <button class="bell" id="avBell" type="button" aria-label="Notificaciones" aria-controls="panelAvisos"></button>
   </div>
 </header>
 
 <main class="wrap">
 
-  <div class="days" id="dias" role="tablist" aria-label="Días de la semana"></div>
-  <button class="back" id="volver">Volver a hoy</button>
+  <div class="side">
+    <nav class="days" id="dias" role="tablist" aria-label="Días de la semana"></nav>
+    <button class="back" id="volver" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      Volver a hoy
+    </button>
 
-  <div class="alert" id="aviso"></div>
+    <div class="alert" id="aviso" role="status"></div>
 
-  <section class="now" id="ahora" role="button" tabindex="0" aria-label="Ir a la actividad actual">
-    <div class="now-lab"><span class="pulse"></span> Ahora</div>
-    <div class="now-act" id="nAct">—</div>
-    <div class="now-sub" id="nSub"></div>
-    <div class="now-meta">
-      <span class="now-rng num" id="nRng"></span>
-      <span class="now-left" id="nLeft"></span>
-    </div>
-    <div class="track"><i id="nBar"></i></div>
-    <div class="now-next">
-      <span class="ar">→</span>
-      <span class="tx" id="nNext"></span>
-      <span class="hr num" id="nNextHr"></span>
-    </div>
-  </section>
+    <section class="now" id="ahora" role="button" tabindex="0" aria-label="Ir a la actividad actual">
+      <div class="now-top">
+        <span class="now-lab"><span class="pulse"></span><span id="nLab">Ahora</span></span>
+        <span class="now-cat" id="nCat"></span>
+      </div>
+      <h1 class="now-act" id="nAct">—</h1>
+      <div class="now-sub" id="nSub"></div>
+      <div class="track"><i id="nBar"></i></div>
+      <div class="now-meta">
+        <span class="now-rng num" id="nRng"></span>
+        <span class="now-left" id="nLeft"></span>
+      </div>
+      <div class="now-next">
+        <span class="nx-ic" id="nNextIc"></span>
+        <span class="tx"><span class="nx-lab" id="nNextLab">Siguiente</span><span class="nx-name" id="nNext"></span></span>
+        <span class="hr num" id="nNextHr"></span>
+      </div>
+    </section>
 
-  <section class="prog" id="prog">
-    <div class="ring" id="ring"><i class="num" id="ringPct">0%</i></div>
-    <div>
-      <div class="t" id="progT">Progreso del día</div>
-      <div class="s" id="progS"></div>
-    </div>
-  </section>
-
-  <div class="head">
-    <h2 id="tituloLinea">Línea del día</h2>
-    <span class="c num" id="conteo"></span>
+    <section class="prog" id="prog" aria-label="Progreso del día">
+      <div class="prog-row">
+        <span class="t" id="progT">Progreso del día</span>
+        <span class="pct num" id="ringPct">0%</span>
+      </div>
+      <div class="bar"><i id="progBar"></i></div>
+      <div class="prog-row sm">
+        <span id="progS"></span>
+        <span class="num" id="diaPct"></span>
+      </div>
+      <div class="bar thin"><i id="diaBar"></i></div>
+    </section>
   </div>
-  <div class="line" id="linea"></div>
 
-  <details class="panel">
-    <summary>Anclas y contingencias <span class="cr">▼</span></summary>
-    <div class="in">
-      <h4>Anclas duras</h4>
-      <ul id="anclas"></ul>
-      <h4>Si algo sale mal</h4>
-      <ul>
-        <li><b>Vas 30 min tarde:</b> recorta ocio, nunca el bloque profundo.</li>
-        <li><b>Algo se alarga:</b> primero los buffers, luego el ocio; jamás comida ni sueño.</li>
-        <li><b>Pierdes 1 hora:</b> salva comidas, fisio/acupuntura y 60 min de habilidad.</li>
-        <li><b>Muy cansado:</b> anclas + comidas + 1 bloque corto. El entreno se salta, la fisio no.</li>
-      </ul>
-      <h4>Fin de semana</h4>
-      <ul>
-        <li><b>Sábado más relajado:</b> deja solo el bloque profundo de la mañana (60–90 min) y quita el bloque 2.</li>
-        <li>Uno de los dos días del finde, capricho a domicilio.</li>
-      </ul>
-      <div class="legend" id="leyenda"></div>
+  <div class="main">
+    <div class="head">
+      <div>
+        <h2 id="tituloLinea">Línea del día</h2>
+        <div class="foco" id="focoLinea"></div>
+      </div>
+      <span class="c num" id="conteo"></span>
     </div>
-  </details>
+    <ol class="line" id="linea"></ol>
 
-  <p class="foot">
-    Entreno: martes · jueves · sábado · domingo<br>
-    Acupuntura: lunes · miércoles · viernes &nbsp;·&nbsp; Fisio: lunes a viernes<br>
-    El progreso se reinicia solo cada día (hora de Ciudad de México)
-  </p>
+    <details class="panel">
+      <summary>
+        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="5"/></svg></span>
+        <span class="grow">Anclas y contingencias</span>
+        <span class="cr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
+      </summary>
+      <div class="in">
+        <h4>Anclas duras</h4>
+        <ul id="anclas"></ul>
+        <h4>Si algo sale mal</h4>
+        <ul>
+          <li><b>Vas 30 min tarde:</b> recorta tiempo libre; nunca el bloque profundo ni las tareas.</li>
+          <li><b>Si algo se alarga:</b> usa primero el margen que haya, después tiempo libre; nunca sacrifiques comida ni sueño.</li>
+          <li><b>Pierdes 1 hora:</b> salva clases, fisio, comidas, tareas y 60 min de habilidad, en ese orden.</li>
+          <li><b>La fisio cae a otra hora:</b> sigue siendo dentro de la ventana; lo que sobre de la ventana es margen. No muevas la comida ni las tareas.</li>
+          <li><b>Las tareas no caben:</b> lo pendiente pasa al siguiente bloque de tareas, nunca al de habilidad.</li>
+          <li><b>Muy cansado:</b> anclas + comidas + 1 bloque corto. El entreno se salta, la fisio no. El reset de casa baja a 10 min (platos y basura), pero no se salta.</li>
+        </ul>
+        <h4>Fin de semana</h4>
+        <ul>
+          <li><b>Sábado más relajado:</b> deja solo el bloque profundo de la mañana (60–90 min) y quita el bloque 2.</li>
+          <li>Uno de los dos días del finde, capricho a domicilio: esa noche no cocinas.</li>
+          <li>Sábado: limpieza + lavandería. Domingo: súper y plan de comidas de la semana.</li>
+        </ul>
+        <div class="legend" id="leyenda"></div>
+      </div>
+    </details>
+
+    <details class="panel" id="panelAvisos">
+      <summary>
+        <span class="ic" id="avIc"></span>
+        <span class="grow">Notificaciones</span>
+        <span class="pill" id="avPill">…</span>
+        <span class="cr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
+      </summary>
+      <div class="in">
+        <p class="av-txt" id="avTxt"></p>
+        <fieldset class="seg" id="avLead">
+          <legend>Avisarme</legend>
+          <div class="seg-in">
+            <label><input type="radio" name="lead" value="0"><span>Al empezar</span></label>
+            <label><input type="radio" name="lead" value="5" checked><span>5 min antes</span></label>
+            <label><input type="radio" name="lead" value="10"><span>10 min antes</span></label>
+          </div>
+        </fieldset>
+        <div class="av-btns">
+          <button class="btn primary" id="avBoton" type="button">Activar notificaciones</button>
+          <button class="btn ghost" id="avPrueba" type="button" hidden>Enviar una prueba</button>
+        </div>
+        <p class="av-nota">Un aviso por actividad, como máximo. No avisa de márgenes, tiempo libre ni sueño, ni de lo que ya marcaste como hecho.</p>
+      </div>
+    </details>
+
+    <p class="foot">
+      Entreno: martes · jueves · sábado · domingo<br>
+      Fisio: lunes a viernes, hora variable <span id="footFisio"></span><br>
+      El progreso se reinicia solo cada día (hora de Ciudad de México)
+    </p>
+  </div>
 
 </main>
 
 <script src="rutina.js"></script>
 <script src="app.js"></script>
+<script src="push-config.js"></script>
+<script src="avisos.js"></script>
 </body>
 </html>
