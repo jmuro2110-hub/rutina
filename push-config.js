@@ -8,5 +8,6 @@
    aparecen como "Sin configurar".
    ============================================================ */
 const PUSH = {
-  servidor: ''
+  servidor: 'https://rutina-push.jmuro2110-941.workers.dev'
+};
 };
