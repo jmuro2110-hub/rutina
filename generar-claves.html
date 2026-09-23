@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generar claves VAPID</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { color-scheme: dark; }
+  body { font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: #0A0A0B; color: #F5F4F0; margin: 0; padding: 24px 16px 48px; }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; letter-spacing: -.02em; }
+  p, li { color: #B3B1AB; }
+  b { color: #F5F4F0; }
+  button { font: inherit; font-weight: 650; min-height: 46px; padding: 0 18px; border-radius: 12px; border: 0; background: #FF7A2F; color: #1B0B02; cursor: pointer; }
+  button.sec { background: #26262A; color: #F5F4F0; min-height: 36px; font-size: 14px; }
+  .campo { margin-top: 20px; }
+  .campo label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8C8A85; margin-bottom: 6px; }
+  textarea { width: 100%; box-sizing: border-box; font: 14px/1.4 ui-monospace, Menlo, monospace; background: #151517; color: #F5F4F0; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; padding: 12px; resize: none; }
+  .aviso { border: 1px solid rgba(240,163,58,.35); background: rgba(240,163,58,.09); color: #F2CD95; border-radius: 12px; padding: 12px 14px; }
+  [hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Generar claves VAPID</h1>
+  <p>Crea el par de claves para las notificaciones. Se generan <b>aquí, en tu navegador</b>: no se envían a ningún sitio. Cada vez que tocas el botón salen claves nuevas.</p>
+  <p class="aviso">La <b>clave privada</b> solo se pega en Cloudflare como <b>secreto</b>. Nunca la subas a GitHub ni la mandes por chat.</p>
+  <button id="gen" type="button">Generar claves</button>
+
+  <div id="res" hidden>
+    <div class="campo">
+      <label for="pub">VAPID_PUBLIC_KEY (pública)</label>
+      <textarea id="pub" rows="3" readonly></textarea>
+      <button class="sec" type="button" data-copiar="pub">Copiar</button>
+    </div>
+    <div class="campo">
+      <label for="priv">VAPID_PRIVATE_KEY (secreta)</label>
+      <textarea id="priv" rows="2" readonly></textarea>
+      <button class="sec" type="button" data-copiar="priv">Copiar</button>
+    </div>
+    <p>Guárdalas antes de cerrar esta página. Si pierdes la privada, genera otras y vuelve a activar las notificaciones en el iPhone.</p>
+  </div>
+</main>
+<script>
+  const b64u = buf => btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  document.getElementById('gen').addEventListener('click', async () => {
+    const par = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
+    const pub = await crypto.subtle.exportKey('raw', par.publicKey);
+    const jwk = await crypto.subtle.exportKey('jwk', par.privateKey);
+    document.getElementById('pub').value = b64u(pub);
+    document.getElementById('priv').value = jwk.d;
+    document.getElementById('res').hidden = false;
+  });
+  document.querySelectorAll('[data-copiar]').forEach(b => b.addEventListener('click', async () => {
+    const t = document.getElementById(b.dataset.copiar);
+    try { await navigator.clipboard.writeText(t.value); b.textContent = 'Copiada'; }
+    catch (e) { t.select(); b.textContent = 'Selecciónala y copia'; }
+    setTimeout(() => { b.textContent = 'Copiar'; }, 1800);
+  }));
+</script>
+</body>
+</html>

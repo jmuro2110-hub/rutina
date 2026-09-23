@@ -1,0 +1,21 @@
+# Solo si despliegas con la terminal (wrangler). Desde el panel web de
+# Cloudflare no hace falta este archivo: ver NOTIFICATIONS_SETUP.md.
+name = "rutina-push"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+
+# revisa cada minuto si toca avisar
+[triggers]
+crons = ["* * * * *"]
+
+[[kv_namespaces]]
+binding = "RUTINA_KV"
+id = "PEGA_AQUI_EL_ID_DE_TU_KV"
+
+[vars]
+ALLOWED_ORIGINS = "https://jmuro2110-hub.github.io"
+
+# Las claves NO van aquí. Súbelas con:
+#   npx wrangler secret put VAPID_PRIVATE_KEY
+#   npx wrangler secret put VAPID_PUBLIC_KEY
+#   npx wrangler secret put VAPID_SUBJECT
