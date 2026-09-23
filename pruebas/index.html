@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pruebas de la rutina</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { color-scheme: dark; }
+  body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: #0A0A0B; color: #F5F4F0; margin: 0; padding: 20px 16px 48px; }
+  main { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #8C8A85; margin: 22px 0 8px; }
+  #resumen { font-size: 16px; font-weight: 650; margin: 8px 0 16px; }
+  .ok { color: #3DD68C; } .mal { color: #F58A97; }
+  li { margin: 2px 0; }
+  ul { padding-left: 18px; margin: 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pruebas de la rutina</h1>
+  <p>Abre esta página en el navegador: comprueba los horarios de los 7 días y el servidor de avisos (con KV y push simulados). No toca tus datos.</p>
+  <div id="resumen">Ejecutando…</div>
+  <div id="salida"></div>
+</main>
+<script src="../rutina.js"></script>
+<script type="module" src="pruebas.js"></script>
+</body>
+</html>
