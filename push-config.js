@@ -10,4 +10,3 @@
 const PUSH = {
   servidor: 'https://rutina-push.jmuro2110-941.workers.dev'
 };
-};
