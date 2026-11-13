@@ -1,9 +1,11 @@
 /* ============================================================
-   RUTINA FACIAL — guía de consulta para casa
+   RUTINA FACIAL — guía de consulta, una tarjeta a la vez
    ------------------------------------------------------------
    Independiente de la Rutina y de Ejercicio: no usa sus
-   variables ni su guardado. El bloque elegido vive solo en
-   memoria. Mostrar/ocultar la pestaña lo hace vistas.js.
+   variables ni su guardado. Guarda SOLO el punto de lectura
+   (bloque y tarjeta) en su propia clave de localStorage.
+   Avanzar de tarjeta solo cambia la vista: no marca nada como
+   hecho. Mostrar/ocultar la pestaña lo hace vistas.js.
    ============================================================ */
 
 (function () {
@@ -12,9 +14,10 @@
   const vista = document.getElementById('facial');
   if (!vista || typeof FACIAL_BLOQUES === 'undefined') return;
 
-  const EJ = FACIAL_EJ, BLOQUES = FACIAL_BLOQUES, G = FACIAL_GUIA;
+  const EJ = FACIAL_EJ, BLOQUES = FACIAL_BLOQUES, REF = FACIAL_REF, G = FACIAL_GUIA;
+  const CLAVE = 'rutina_facial_v1';
 
-  /* bloque inicial según la hora de Ciudad de México: mañana → A, después → B */
+  /* ---------- punto de lectura (guardado propio) ---------- */
   function horaMx() {
     try {
       const h = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', hour: 'numeric', hourCycle: 'h23' }).format(new Date());
@@ -23,123 +26,190 @@
     } catch (e) { /* respaldo: hora local */ }
     return new Date().getHours();
   }
-  let elegido = horaMx() < 14 ? 'A' : 'B';
+  const estado = { b: horaMx() < 14 ? 'A' : 'B', i: { A: 0, B: 0, D: 0 } };
+  try {
+    const g = JSON.parse(localStorage.getItem(CLAVE) || 'null');
+    if (g && BLOQUES.some(x => x.k === g.b)) estado.b = g.b;
+    if (g && g.i) BLOQUES.forEach(x => { if (Number.isInteger(g.i[x.k])) estado.i[x.k] = g.i[x.k]; });
+  } catch (e) { /* sin guardado: valores por defecto */ }
+  function guardar() {
+    try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+
+  /* cada bloque es una secuencia: «Antes de empezar» (si aplica) + ejercicios */
+  function pasosDe(b) {
+    return (b.intro ? [{ intro: true }] : []).concat(b.lista);
+  }
 
   /* ---------- plantilla ---------- */
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const RELOJ = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>';
   const ALTO  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 3h7L21 8.5v7L15.5 21h-7L3 15.5v-7z"/><path d="M12 8v5M12 16.5v.01"/></svg>';
-  const MANO  = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.01"/></svg>';
-  const OJO   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>';
+  const INFO  = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.01"/></svg>';
+  const IZQ   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  const DER   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 
-  const TAG = {
-    propuesta:  '<span class="fa-tag">Propuesta del PDF</span>',
-    referencia: '<span class="fa-tag ref">Solo referencia</span>'
-  };
-
-  function lista(arr, ordenada) {
-    const t = ordenada ? 'ol' : 'ul';
+  const lista = (arr, ord) => {
+    const t = ord ? 'ol' : 'ul';
     return '<' + t + '>' + arr.map(x => '<li>' + esc(x) + '</li>').join('') + '</' + t + '>';
+  };
+  const stats = d => '<div class="fa-stats">' + d.map(x =>
+    '<div class="fa-st"><b class="num">' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>').join('') + '</div>';
+  const descanso = t => '<div class="fa-desc">' + RELOJ + '<span>Descanso: <b>' + esc(t) + '</b></span></div>';
+  const sub = t => '<div class="fa-sub">' + esc(t) + '</div>';
+  const cajaAlto = (titulo, items, fuerte) => '<div class="fa-parar' + (fuerte ? ' fuerte' : '') + '">' +
+    '<div class="lab">' + ALTO + esc(titulo) + '</div>' +
+    (Array.isArray(items) ? lista(items) : '<p>' + esc(items) + '</p>') + '</div>';
+
+  function tarjetaIntro(b) {
+    return '<article class="fa-it">' +
+      '<h3 class="fa-n">Antes de empezar</h3>' +
+      sub('Posición') + '<p class="fa-txt">' + esc(G.posicion) + '</p>' +
+      sub('Esfuerzo') + '<p class="fa-txt">' + esc(G.esfuerzo) + '</p>' +
+      cajaAlto('Si una repetición falla', [G.falla, G.excepcion]) +
+      sub('Cuándo terminaste') + '<p class="fa-txt">' + esc(G.suficiente) + '</p>' +
+      (b.nota ? '<p class="fa-cond">' + esc(b.nota) + '</p>' : '') +
+      '<details class="fa-det"><summary>Ver detalle</summary>' +
+        sub('Cuándo bajar') + '<p class="fa-txt">' + esc(G.bajar) + '</p>' +
+        sub('Qué no hacer') + '<div class="fa-ul">' + lista(G.noHacer) + '</div>' +
+        cajaAlto('Para y consulta a tu médico si aparece algo nuevo', G.medico) +
+      '</details>' +
+    '</article>';
   }
 
-  function tarjeta(item) {
-    const e = EJ[item.e];
-    const ref = e.tipo === 'referencia';
-    const dosis = item.dosis || e.dosis;
-
+  function tarjetaEj(item) {
+    const e = EJ[item.e], d = e.det || {};
     const detalle =
-      '<p class="fa-para">' + esc(e.para) + '</p>' +
-      '<div class="fa-stats">' + dosis.map(d =>
-        '<div class="fa-st"><b class="num">' + esc(d[0]) + '</b><span>' + esc(d[1]) + '</span></div>'
-      ).join('') + '</div>' +
-      '<div class="fa-desc">' + RELOJ + '<span>Descanso: <b>' + esc(e.desc) + '</b></span></div>' +
-      (e.pos ? '<p class="fa-pos"><b>Posición.</b> ' + esc(e.pos) + '</p>' : '') +
-      (e.previo ? '<div class="fa-previo"><div class="lab">' + esc(e.previo.t) + '</div><p>' + esc(e.previo.p) + '</p></div>' : '') +
-      (e.escalera ? '<div class="fa-sub">Escalera de ayuda</div><ul class="fa-esc">' +
-        e.escalera.map(n => '<li><span class="num">' + n[0] + '</span><p>' + esc(n[1]) + '</p></li>').join('') + '</ul>' : '') +
-      '<div class="fa-sub">Pasos</div>' + '<div class="fa-pasos">' + lista(e.pasos, true) + '</div>' +
-      (e.frases ? '<div class="fa-sub">Frases</div><ul class="fa-frases">' + e.frases.map(f => '<li>«' + esc(f) + '»</li>').join('') + '</ul>' : '') +
-      '<div class="fa-ver">' + OJO + '<p>' + esc(e.ver) + '</p></div>';
+      (d.para ? sub('Para qué') + '<p class="fa-txt">' + esc(d.para) + '</p>' : '') +
+      (d.pasos ? sub('Pasos completos') + '<div class="fa-pasos">' + lista(d.pasos, true) + '</div>' : '') +
+      (d.ver ? sub('Qué deberías ver') + '<p class="fa-txt">' + esc(d.ver) + '</p>' : '') +
+      (d.mas ? sub('Otras señales del PDF') + '<div class="fa-ul">' + lista(d.mas) + '</div>' : '') +
+      (d.nota ? '<p class="fa-cond">' + esc(d.nota) + '</p>' : '');
 
-    return '<li class="fa-it' + (ref ? ' ref' : '') + '">' +
-      '<div class="fa-top">' +
-        '<span class="fa-num num" aria-hidden="true">' + esc(e.num) + '</span>' +
-        '<div class="fa-tt"><h3 class="fa-n">' + esc(e.n) + '</h3>' + TAG[e.tipo] + '</div>' +
-      '</div>' +
-      (ref
-        ? '<div class="fa-aviso">' + MANO + '<p>' + esc(e.aviso) + '</p></div>' +
-          '<details class="fa-det"><summary>Ver cómo lo describe el PDF</summary>' + detalle + '</details>'
-        : detalle) +
-      '<div class="fa-parar">' +
-        '<div class="lab">' + ALTO + 'Señales para parar</div>' + lista(e.parar) +
-      '</div>' +
-      (e.cond ? '<p class="fa-cond">' + esc(e.cond) + '</p>' : '') +
-    '</li>';
+    return '<article class="fa-it">' +
+      '<h3 class="fa-n">' + esc(e.n) + '</h3>' +
+      '<span class="fa-tag">Propuesta del PDF · dosis sin confirmar</span>' +
+      stats(item.dosis || e.dosis) +
+      descanso(e.desc) +
+      sub('Pasos') + '<div class="fa-pasos">' + lista(e.breve, true) + '</div>' +
+      (e.frases ? '<ul class="fa-frases">' + e.frases.map(f => '<li>«' + esc(f) + '»</li>').join('') + '</ul>' : '') +
+      (e.suspender ? cajaAlto('Suspende este ejercicio', e.suspender, true) : '') +
+      (e.alto && e.alto.length ? cajaAlto('Señal para parar', e.alto) : '') +
+      (e.cond ? '<p class="fa-cond">' + INFO + '<span>' + esc(e.cond) + '</span></p>' : '') +
+      (detalle ? '<details class="fa-det"><summary>Ver detalle</summary>' + detalle + '</details>' : '') +
+    '</article>';
+  }
+
+  function tarjetaRef(r) {
+    return '<article class="fa-it ref">' +
+      '<h3 class="fa-n">' + esc(r.n) + '</h3>' +
+      '<span class="fa-tag ref">Solo referencia</span>' +
+      '<div class="fa-aviso">' + INFO + '<p>' + esc(r.aviso) + '</p></div>' +
+      '<p class="fa-cond">' + esc(r.donde) + '</p>' +
+      '<details class="fa-det"><summary>Ver cómo lo describe el PDF</summary>' +
+        stats(r.dosis) + descanso(r.desc) +
+        (r.previo ? '<p class="fa-txt fa-previo">' + esc(r.previo) + '</p>' : '') +
+        (r.escalera ? sub('Escalera de ayuda') + '<ul class="fa-esc">' +
+          r.escalera.map(n => '<li><span class="num">' + n[0] + '</span><p>' + esc(n[1]) + '</p></li>').join('') + '</ul>' : '') +
+        sub('Pasos') + '<div class="fa-pasos">' + lista(r.pasos, true) + '</div>' +
+        sub('Qué deberías ver') + '<p class="fa-txt">' + esc(r.ver) + '</p>' +
+        cajaAlto('Señales para parar', r.alto) +
+      '</details>' +
+    '</article>';
   }
 
   vista.innerHTML =
-    '<div class="fa-lado">' +
-      '<section class="fa-intro" aria-labelledby="faTit">' +
-        '<span class="fa-estado">Rutina propuesta en el PDF</span>' +
-        '<h2 id="faTit">Rutina facial</h2>' +
-        '<p>Todavía no está confirmado qué ejercicios te enseñaron ni qué dosis te indicaron. Esto es lo que propone el documento, tal cual.</p>' +
-        '<div class="fa-cifras">' +
-          '<div><b class="num">≈ 24 min</b><span>plan completo, estimación del PDF</span></div>' +
-          '<div><b class="num">5–6 min</b><span>de movimiento activo</span></div>' +
-        '</div>' +
-        '<p class="fa-nota">No es una meta diaria: si terminas las series o un ejercicio te pide parar, terminaste. No hace falta rellenar el tiempo.</p>' +
-        '<div class="fa-ley">' + TAG.propuesta + '<span>para hacer en casa según el PDF</span></div>' +
-        '<div class="fa-ley">' + TAG.referencia + '<span>el PDF pide enseñanza presencial</span></div>' +
-      '</section>' +
-      '<nav class="fa-bloques" role="tablist" aria-label="Bloque">' +
-        BLOQUES.map(b =>
-          '<button class="fa-bl" type="button" role="tab" data-k="' + b.k + '" aria-controls="faLista">' +
-            '<span class="l">' + esc(b.corto) + '</span><span class="f">' + (b.k === 'D' ? 'Revisiones' : 'Bloque ' + b.k) + '</span>' +
-          '</button>'
-        ).join('') +
-      '</nav>' +
+    '<nav class="fa-bloques" role="tablist" aria-label="Bloque">' +
+      BLOQUES.map(b => '<button class="fa-bl" type="button" role="tab" data-k="' + b.k + '" aria-controls="faPaso">' + esc(b.corto) + '</button>').join('') +
+    '</nav>' +
+    '<div class="fa-ctx">' +
+      '<span class="fa-tag">Propuesta del PDF · dosis sin confirmar</span>' +
+      '<p>Los ≈ 24 min son el plan completo del documento, no una meta; el bloque de 30 min de tu calendario no añade otra sesión.</p>' +
     '</div>' +
-    '<div class="fa-main">' +
+    '<section class="fa-paso" id="faPaso" aria-live="polite">' +
       '<div class="fa-head">' +
         '<h2 id="faBloque"></h2>' +
-        '<div class="fa-meta num" id="faMeta"></div>' +
-        '<p class="fa-bnota" id="faNota"></p>' +
+        '<div class="fa-meta" id="faMeta"></div>' +
       '</div>' +
-      '<ol class="fa-lista" id="faLista" aria-labelledby="faBloque"></ol>' +
-      '<section class="fa-reglas" aria-labelledby="faReglas">' +
-        '<h2 id="faReglas">Para todos los ejercicios</h2>' +
-        '<div class="fa-card"><h3>Antes de empezar</h3><p>' + esc(G.comun) + '</p><p><b>Esfuerzo.</b> ' + esc(G.esfuerzo) + '</p></div>' +
-        '<div class="fa-card alto"><h3>' + ALTO + 'Si una repetición falla</h3><p>' + esc(G.falla.que) + '</p>' + lista(G.falla.pasos, true) + '</div>' +
-        '<div class="fa-card"><h3>Ya hiciste suficiente</h3><p>' + esc(G.suficiente) + '</p></div>' +
-        '<div class="fa-card"><h3>Cuándo bajar</h3><p>' + esc(G.bajar) + '</p></div>' +
-        '<div class="fa-card"><h3>Qué no hacer</h3>' + lista(G.noHacer) + '</div>' +
-        '<div class="fa-card alto"><h3>' + ALTO + 'Para y consulta a tu médico si aparece algo nuevo</h3>' + lista(G.medico) + '</div>' +
-      '</section>' +
-    '</div>';
+      '<div class="fa-cont">' +
+        '<span class="fa-cuenta" id="faCuenta"></span>' +
+        '<span class="fa-puntos" id="faPuntos" aria-hidden="true"></span>' +
+      '</div>' +
+      '<div id="faTarjeta"></div>' +
+      '<div class="fa-nav">' +
+        '<button class="fa-btn" id="faAnt" type="button">' + IZQ + '<span>Anterior</span></button>' +
+        '<button class="fa-btn sig" id="faSig" type="button"><span>Siguiente</span>' + DER + '</button>' +
+      '</div>' +
+    '</section>' +
+    '<details class="fa-refs">' +
+      '<summary><span class="fa-tag ref">Solo referencia</span><span>' + REF.length + ' técnicas que el PDF pide aprender en persona</span></summary>' +
+      '<div class="fa-refs-in">' + REF.map(tarjetaRef).join('') + '</div>' +
+    '</details>';
 
   const botones = Array.prototype.slice.call(vista.querySelectorAll('.fa-bl'));
+  const $ = id => document.getElementById(id);
+  const paso = $('faPaso'), ant = $('faAnt'), sig = $('faSig');
 
   function pintar() {
-    const b = BLOQUES.find(x => x.k === elegido) || BLOQUES[0];
+    const b = BLOQUES.find(x => x.k === estado.b) || BLOQUES[0];
+    const pasos = pasosDe(b);
+    let i = Math.min(Math.max(estado.i[b.k] || 0, 0), pasos.length - 1);
+    estado.i[b.k] = i;
+
     botones.forEach(x => {
       const sel = x.dataset.k === b.k;
       x.setAttribute('aria-selected', sel ? 'true' : 'false');
       x.tabIndex = sel ? 0 : -1;
     });
-    document.getElementById('faBloque').textContent = b.nombre;
-    document.getElementById('faMeta').textContent = b.tiempo + ' estimado · ' + b.activo;
-    document.getElementById('faNota').textContent = b.nota;
-    document.getElementById('faLista').innerHTML = b.lista.map(tarjeta).join('');
+    $('faBloque').textContent = b.nombre;
+    $('faMeta').textContent = b.meta;
+
+    const p = pasos[i];
+    const nEj = b.lista.length;
+    const offset = b.intro ? 1 : 0;
+    $('faCuenta').textContent = p.intro
+      ? 'Antes de los ' + nEj + ' ejercicios'
+      : 'Ejercicio ' + (i - offset + 1) + ' de ' + nEj;
+    $('faPuntos').innerHTML = pasos.map((x, j) =>
+      '<i class="' + (x.intro ? 'in ' : '') + (j === i ? 'on' : j < i ? 'ya' : '') + '"></i>').join('');
+    $('faTarjeta').innerHTML = p.intro ? tarjetaIntro(b) : tarjetaEj(p);
+
+    ant.disabled = i === 0;
+    const ult = i === pasos.length - 1;
+    sig.disabled = ult;
+    sig.querySelector('span').textContent = ult ? 'Fin del bloque' : 'Siguiente';
   }
 
+  /* al cambiar de tarjeta, lleva la vista al inicio de la tarjeta */
+  function alInicio() {
+    const top = document.querySelector('header.top');
+    const alto = top ? top.getBoundingClientRect().height : 0;
+    const y = paso.getBoundingClientRect().top + window.scrollY - alto - 8;
+    if (window.scrollY > y) window.scrollTo(0, Math.max(0, y));
+  }
+
+  function mover(d) {
+    const b = BLOQUES.find(x => x.k === estado.b);
+    const n = pasosDe(b).length;
+    const nuevo = Math.min(Math.max(estado.i[b.k] + d, 0), n - 1);
+    if (nuevo === estado.i[b.k]) return;
+    estado.i[b.k] = nuevo;
+    guardar(); pintar(); alInicio();
+  }
+  ant.addEventListener('click', () => mover(-1));
+  sig.addEventListener('click', () => mover(1));
+
   botones.forEach((b, i) => {
-    b.addEventListener('click', () => { elegido = b.dataset.k; pintar(); });
+    b.addEventListener('click', () => {
+      if (estado.b === b.dataset.k) return;
+      estado.b = b.dataset.k; guardar(); pintar(); alInicio();
+    });
     b.addEventListener('keydown', e => {
-      const paso = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (!paso) return;
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
       e.preventDefault();
-      const sig = botones[(i + paso + botones.length) % botones.length];
-      sig.focus(); sig.click();
+      const s = botones[(i + d + botones.length) % botones.length];
+      s.focus(); s.click();
     });
   });
 

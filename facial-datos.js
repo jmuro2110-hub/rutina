@@ -5,60 +5,155 @@
    Todo es la PROPUESTA del PDF: todavía no está confirmado qué
    ejercicios te enseñaron ni qué dosis te indicaron.
 
-   tipo: 'propuesta'  → propuesta del PDF para casa
-         'referencia' → el PDF pide enseñanza presencial antes de
-                        practicarlo; solo se muestra como consulta
+   Cada ejercicio tiene:
+     breve → pasos cortos, siempre a la vista
+     alto  → señal específica para parar, siempre a la vista
+     cond  → condición del PDF, a la vista
+     det   → explicación larga, dentro de «Ver detalle»
    ============================================================ */
 
 const FACIAL_EJ = {
   masaje: {
-    num: 'M', n: 'Masaje suave de preparación', tipo: 'propuesta',
-    para: 'Soltar mejillas y labios antes de moverlos.',
+    n: 'Masaje suave de preparación',
     dosis: [['90 s', 'una vez'], ['Sin dolor', 'presión suave']],
-    desc: 'Sin descanso: pasa directo al siguiente ejercicio.',
-    pasos: [
-      'Círculos lentos con las yemas en las mejillas.',
-      'Sigue alrededor de los labios.',
-      'Termina en la barbilla.'
+    desc: 'Ninguno: pasa directo al siguiente',
+    breve: [
+      'Círculos lentos con las yemas: mejillas, alrededor de los labios y barbilla.',
+      'Suave y sin dolor.'
     ],
-    ver: 'Debe sentirse suave y sin dolor.',
-    parar: ['Si duele, para: el masaje tiene que ser sin dolor.'],
-    cond: 'El PDF indica que las zonas y la presión se enseñan en persona.'
+    alto: ['Si duele, para: el masaje tiene que ser sin dolor.'],
+    cond: 'El PDF indica que las zonas y la presión se enseñan en persona.',
+    det: {
+      para: 'Soltar mejillas y labios antes de moverlos.'
+    }
   },
 
   sello: {
-    num: '1', n: 'Sello suave sostenido', tipo: 'propuesta',
-    para: 'Que la boca pueda quedar cerrada en reposo y entre palabras.',
-    pos: 'Dientes apenas separados y lengua descansando arriba, en el paladar.',
+    n: 'Sello suave sostenido',
     desc: '10 s entre cierres · 60 s entre series',
-    pasos: [
-      'Mira tu ojo derecho y tus comisuras en reposo, como referencia.',
-      'Junta los labios en unos 2 s, con el mínimo esfuerzo que logre contacto de lado a lado.',
+    breve: [
+      'Dientes apenas separados, lengua en el paladar.',
+      'Junta los labios en 2 s con el mínimo esfuerzo.',
       'Sostén 3 s respirando por la nariz.',
-      'Suelta en 2 s y deja la boca descansar 10 s.',
-      'Haz el segundo cierre y termina la serie. Descansa 60 s.'
+      'Suelta en 2 s, descansa 10 s y haz el segundo cierre.',
+      'Descansa 60 s antes de la siguiente serie.'
     ],
-    ver: 'Contacto parejo de izquierda a derecha, el ojo igual de abierto que en reposo, la barbilla lisa y los dientes sin apretar. Si la barbilla se arruga o aprietas los dientes, el mentón o la mandíbula están haciendo el trabajo.',
-    parar: [
-      'Esfuerzo: el mínimo que logre el contacto. Si necesitas más de 5 de 10, esa repetición no cuenta.',
-      'No fuerces la tercera: la serie termina en 2 cierres.',
-      'Si la segunda ya pasó de 5 de 10 de esfuerzo, alarga el descanso a 90 s.',
-      'Si tras el descanso el primer cierre ya falla, el ejercicio terminó en este bloque.',
-      'Si eso pasa dos bloques seguidos, quita una serie al día siguiente.'
+    alto: [
+      'La serie termina en 2 cierres: no fuerces la tercera.',
+      'Si necesitas más de 5 de 10 de esfuerzo, esa repetición no cuenta.',
+      'Si tras el descanso el primer cierre ya falla, el ejercicio terminó en este bloque.'
     ],
-    cond: 'El PDF pide revisar la técnica en persona: dientes, mentón y ojo.'
+    cond: 'El PDF pide revisar la técnica en persona: dientes, mentón y ojo.',
+    det: {
+      para: 'Que la boca pueda quedar cerrada en reposo y entre palabras. Es la base del inflado y del beso.',
+      pasos: [
+        'Mira tu ojo derecho y tus comisuras en reposo, como referencia.',
+        'Junta los labios en unos 2 s, con el mínimo esfuerzo que logre contacto de lado a lado.',
+        'Sostén 3 s respirando por la nariz.',
+        'Suelta en 2 s y deja la boca descansar 10 s.',
+        'Haz el segundo cierre y termina la serie. Descansa 60 s.'
+      ],
+      ver: 'Contacto parejo de izquierda a derecha, el ojo igual de abierto que en reposo, la barbilla lisa y los dientes sin apretar. Si la barbilla se arruga o aprietas los dientes, el mentón o la mandíbula están haciendo el trabajo.',
+      mas: [
+        'Si la segunda repetición ya pasó de 5 de 10 de esfuerzo, alarga el descanso a 90 s.',
+        'Si el primer cierre falla dos bloques seguidos, quita una serie al día siguiente.'
+      ]
+    }
   },
 
-  inflar: {
-    num: '2', n: 'Inflar con ayuda y poco aire', tipo: 'referencia',
-    aviso: 'El PDF pide que te enseñen en persona dónde va el dedo y que la prueba de la nariz se haga con alguien. Aquí queda solo como referencia.',
-    para: 'Sostener aire en las mejillas; el paso previo a inflar 10 s sin mano.',
+  vocales: {
+    n: 'Vocales «i-u» lentas',
+    dosis: [['5', 'repeticiones'], ['2 s + 2 s', '«i» y luego «u»']],
+    desc: '5 s entre repeticiones',
+    breve: [
+      'Di «i» en voz baja 2 s, con la boca estirada.',
+      'Pasa despacio a «u» 2 s, sin forzar el redondeo.',
+      'Descansa 5 s.'
+    ],
+    suspender: 'Si el ojo derecho se cierra, incluso con la «u» suave: suspende este ejercicio. Aquí no hay reintento. El PDF indica quitarlo hasta una valoración en persona.',
+    alto: [],
+    det: {
+      para: 'Preparar la U con la «u» del habla, sin intentos máximos ni reforzar el cierre del ojo.',
+      ver: 'El ojo derecho igual que en reposo. Busca cualquier mínimo avance o estrechamiento de la boca, aunque sea de un milímetro. Que todavía no aparezca es lo esperado.',
+      nota: 'El PDF permite esta parte sin la enseñanza presencial que pide para el beso asistido con los dedos.'
+    }
+  },
+
+  habla: {
+    n: 'Frases y habla libre',
+    dosis: [['6 × 2', 'frases × vueltas'], ['1 min', 'habla libre']],
+    desc: '30 s entre rondas',
+    breve: [
+      'Lee cada frase a velocidad normal y, al terminarla, cierra los labios suave 2 s.',
+      'Repite la lista una segunda vez.',
+      'Habla 1 minuto libre frente al espejo.'
+    ],
+    frases: ['Papá puso la mesa', 'Mi mamá me ama', 'Un vaso con hielo', 'Pon un poco más', 'Compré pan y queso', 'Me tomo un mango'],
+    alto: ['Si tienes que forzar, baja la velocidad: no subas la fuerza.'],
+    det: {
+      para: 'Usar el cierre dentro de frases y cerrar la boca en las pausas.',
+      ver: 'Contacto en cada p, m y b/v inicial, y la boca cerrada en las pausas.',
+      nota: 'El PDF no pide enseñanza presencial para este ejercicio.'
+    }
+  },
+
+  reposo: {
+    n: 'Revisión de reposo',
+    dosis: [['5', 'veces al día'], ['5 s', 'cada una']],
+    desc: 'Repartidas en el día',
+    breve: [
+      'En 5 momentos fijos (después de comer, en descansos de la tarea), fíjate si tus labios están separados.',
+      'Si lo están, ciérralos suave 5 s y suéltalos.'
+    ],
+    alto: ['Que los labios se vuelvan a abrir es normal por ahora: no cuenta como falla.'],
+    det: {
+      para: 'Notar cuando la boca queda abierta.',
+      nota: 'El PDF no pide enseñanza presencial para este ejercicio.'
+    }
+  }
+};
+
+/* orden relativo del PDF, sin las técnicas que solo quedan de referencia */
+const FACIAL_BLOQUES = [
+  {
+    k: 'A', corto: 'Mañana', nombre: 'Bloque A · mañana',
+    meta: '≈ 11 min según el PDF · ≈ 1.5 min de movimiento activo',
+    nota: 'El día que grabes tu video semanal, el PDF indica saltarte este bloque y hacer solo el B.',
+    intro: true,
+    lista: [
+      { e: 'masaje' },
+      { e: 'sello', dosis: [['4 × 2', 'series × cierres'], ['3 s', 'sostener cada cierre']] }
+    ]
+  },
+  {
+    k: 'B', corto: 'Tarde', nombre: 'Bloque B · tarde o noche',
+    meta: '≈ 11 min según el PDF · ≈ 3.5 min de movimiento activo',
+    nota: 'Unas 4 h después del A (una propuesta del PDF, no un dato probado). El día de grabación, graba primero, en fresco.',
+    intro: true,
+    lista: [
+      { e: 'masaje' },
+      { e: 'vocales' },
+      { e: 'sello', dosis: [['3 × 2', 'series × cierres'], ['3 s', 'sostener cada cierre']] },
+      { e: 'habla' }
+    ]
+  },
+  {
+    k: 'D', corto: 'En el día', nombre: 'Durante el día',
+    meta: '≈ 1 min en total según el PDF',
+    nota: 'Revisiones cortas repartidas en tu día, fuera de los bloques.',
+    intro: false,
+    lista: [{ e: 'reposo' }]
+  }
+];
+
+/* técnicas que el PDF pide aprender en persona: solo consulta */
+const FACIAL_REF = [
+  {
+    n: 'Inflar con ayuda y poco aire', donde: 'En el PDF iba en el bloque A, después del sello.',
+    aviso: 'El PDF pide que te enseñen en persona dónde va el dedo y que la prueba de la nariz se haga con alguien.',
     dosis: [['3 × 3', 'series × repeticiones'], ['2 s', 'sostener · ayuda nivel 3']],
     desc: '15 s entre repeticiones · 60 s entre series',
-    previo: {
-      t: 'Prueba de la nariz, antes de la primera vez',
-      p: 'Infla con ayuda de la mano dos veces, una normal y otra tapándote la nariz. Si con la nariz tapada aguantas claramente más, parte del aire se va por la nariz y no sigues con este ejercicio.'
-    },
+    previo: 'Prueba de la nariz, antes de la primera vez: infla con ayuda de la mano dos veces, una normal y otra tapándote la nariz. Si con la nariz tapada aguantas claramente más, parte del aire se va por la nariz y no sigues con este ejercicio.',
     escalera: [
       ['3', 'Pulgar e índice juntan suavemente los labios en todo su ancho.'],
       ['2', 'Un dedo solo sobre el punto por donde se escapa.'],
@@ -66,24 +161,22 @@ const FACIAL_EJ = {
       ['0', 'Sin mano.']
     ],
     pasos: [
-      'Junta los labios como en el ejercicio 1.',
+      'Junta los labios como en el sello.',
       'Pon la ayuda del nivel que te toca (se empieza en el 3).',
       'Mete poco aire, como un 30 % de lo que inflarías normalmente.',
       'Sostén 2 s.',
       'Suelta el aire despacio por la boca y descansa 15 s.'
     ],
     ver: 'Se inflan las dos mejillas, no sale aire por la nariz ni por las comisuras y el ojo no se cierra.',
-    parar: [
+    alto: [
       'Si el aire se escapa de inmediato: menos aire, nivel 3 de ayuda, dedo justo en el punto de fuga y sostén solo 1 s.',
       'Si se escapa aun con nivel 3 y poco aire, quita este ejercicio.',
       'Si el aire sale por la nariz, no lo practiques: no es un problema de labios.'
     ]
   },
-
-  besoA: {
-    num: '3a', n: 'Beso asistido con los dedos', tipo: 'referencia',
-    aviso: 'El PDF lo marca como indispensable de aprender en persona: la dirección y la presión de los dedos se aprenden viendo. Mientras tanto indica hacer solo la parte 3b.',
-    para: 'Preparar la U y el beso con movimiento asistido, sin reforzar el cierre del ojo.',
+  {
+    n: 'Beso asistido con los dedos', donde: 'En el PDF iba en el bloque B, antes de las vocales «i-u».',
+    aviso: 'El PDF lo marca como indispensable de aprender en persona: la dirección y la presión de los dedos se aprenden viendo. Mientras tanto indica hacer solo las vocales «i-u».',
     dosis: [['5', 'repeticiones'], ['2 s', 'sostener']],
     desc: '10 s entre repeticiones',
     pasos: [
@@ -93,112 +186,19 @@ const FACIAL_EJ = {
       'Sostén 2 s, suelta y descansa 10 s.'
     ],
     ver: 'El ojo derecho igual que en reposo.',
-    parar: [
+    alto: [
       'Si se cierra el ojo derecho: suelta, respira 3 veces y repite una sola vez con la mitad del esfuerzo, más lento.',
       'Dos intentos con cierre del ojo terminan el ejercicio en ese bloque.'
     ]
-  },
-
-  besoB: {
-    num: '3b', n: 'Vocales «i-u» lentas', tipo: 'propuesta',
-    para: 'Preparar la U con la «u» del habla, sin intentos máximos.',
-    dosis: [['5', 'repeticiones'], ['2 s + 2 s', '«i» y luego «u»']],
-    desc: '5 s entre repeticiones',
-    pasos: [
-      'Di «i» en voz baja durante 2 s, con la boca estirada.',
-      'Pasa despacio a «u» durante 2 s, sin forzar el redondeo.',
-      'Descansa 5 s.'
-    ],
-    ver: 'El ojo derecho igual que en reposo. Busca cualquier mínimo avance o estrechamiento de la boca, aunque sea de un milímetro. Que todavía no aparezca es lo esperado.',
-    parar: [
-      'Si se cierra el ojo derecho: suelta, respira 3 veces y repite una sola vez, más suave y más lento.',
-      'Dos intentos con cierre del ojo terminan el ejercicio en ese bloque.',
-      'Si el ojo se cierra incluso con la «u» en voz baja, el PDF indica quitar este ejercicio hasta tener una valoración en persona.'
-    ],
-    cond: 'El PDF permite esta parte sin la enseñanza presencial que pide para la 3a.'
-  },
-
-  habla: {
-    num: '4', n: 'Frases y habla libre', tipo: 'propuesta',
-    para: 'Usar el cierre dentro de frases y cerrar la boca en las pausas.',
-    dosis: [['6 × 2', 'frases × vueltas'], ['1 min', 'habla libre']],
-    desc: '30 s entre rondas',
-    frases: ['Papá puso la mesa', 'Mi mamá me ama', 'Un vaso con hielo', 'Pon un poco más', 'Compré pan y queso', 'Me tomo un mango'],
-    pasos: [
-      'Lee cada frase a velocidad normal, sin exagerar el apretón.',
-      'Al terminar cada frase, cierra los labios suave 2 s y respira por la nariz.',
-      'Repite la lista una segunda vez.',
-      'Habla 1 minuto libre frente al espejo; por ejemplo, qué hiciste hoy.'
-    ],
-    ver: 'Contacto en cada p, m y b/v inicial, y la boca cerrada en las pausas.',
-    parar: [
-      'Si para lograrlo tienes que forzar, baja la velocidad en lugar de subir la fuerza.',
-      'Aquí no aplica la regla de las dos fallas: si no sale, más lento, no más fuerte.'
-    ],
-    cond: 'El PDF no pide enseñanza presencial para este ejercicio.'
-  },
-
-  reposo: {
-    num: '5', n: 'Revisión de reposo', tipo: 'propuesta',
-    para: 'Notar cuando la boca queda abierta.',
-    dosis: [['5', 'veces al día'], ['5 s', 'cada una']],
-    desc: 'Repartidas en el día',
-    pasos: [
-      'Elige 5 momentos fijos del día; por ejemplo, después de cada comida y en los descansos de la tarea.',
-      'Fíjate si tus labios están separados.',
-      'Si lo están, ciérralos suave 5 s y suéltalos.'
-    ],
-    ver: 'Que se vuelvan a abrir es normal por ahora.',
-    parar: ['El PDF no le da una señal propia: que los labios se vuelvan a abrir no cuenta como falla.'],
-    cond: 'El PDF no pide enseñanza presencial para este ejercicio.'
-  }
-};
-
-const FACIAL_BLOQUES = [
-  {
-    k: 'A', corto: 'Mañana', nombre: 'Bloque A · mañana',
-    tiempo: '≈ 11 min', activo: '≈ 1.5 min de movimiento activo',
-    nota: 'El día que grabes tu video semanal, el PDF indica saltarte este bloque y hacer solo el B.',
-    lista: [
-      { e: 'masaje' },
-      { e: 'sello', dosis: [['4 × 2', 'series × cierres'], ['3 s', 'sostener']] },
-      { e: 'inflar' }
-    ]
-  },
-  {
-    k: 'B', corto: 'Tarde', nombre: 'Bloque B · tarde o noche',
-    tiempo: '≈ 11 min', activo: '≈ 3.5 min de movimiento activo',
-    nota: 'Unas 4 h después del A; el PDF aclara que esas 4 h son una propuesta, no un dato probado. El día de grabación, graba primero, en fresco.',
-    lista: [
-      { e: 'masaje' },
-      { e: 'besoA' },
-      { e: 'besoB' },
-      { e: 'sello', dosis: [['3 × 2', 'series × cierres'], ['3 s', 'sostener']] },
-      { e: 'habla' }
-    ]
-  },
-  {
-    k: 'D', corto: 'En el día', nombre: 'Durante el día',
-    tiempo: '≈ 1 min', activo: '≈ 0.5 min de movimiento activo',
-    nota: 'Revisiones cortas repartidas en tu día, fuera de los bloques.',
-    lista: [{ e: 'reposo' }]
   }
 ];
 
 const FACIAL_GUIA = {
-  comun: 'Frente a un espejo o la cámara frontal a la altura de los ojos, sentado, con hombros sueltos y respirando por la nariz. Muévete lento, con poco esfuerzo y mirando tu ojo derecho.',
-  esfuerzo: 'En el sello, el mínimo que logre el contacto (más de 5 de 10 no cuenta). En todo lo demás, 2 o 3 de 10.',
-  suficiente: 'Ya hiciste suficiente cuando terminas las series del bloque, o cuando un ejercicio activa dos veces la regla de parar. Lo que pase primero. Hacer más no suma.',
-  falla: {
-    que: 'Fallar es: el ojo se cierra, el sello se abre o el aire se escapa. Vale para los ejercicios 1, 2 y 3.',
-    pasos: [
-      'Suelta y respira 3 veces.',
-      'Repite una sola vez, más suave: mitad de esfuerzo o más ayuda.',
-      '¿Sale limpia? Sigue con la serie.',
-      '¿No sale? Ese ejercicio terminó por este bloque, sin forzar más.',
-      'Anota qué falló y en qué repetición.'
-    ]
-  },
+  posicion: 'Frente a un espejo o la cámara frontal a la altura de los ojos, sentado, hombros sueltos, respirando por la nariz. Lento, con poco esfuerzo y mirando tu ojo derecho.',
+  esfuerzo: 'En el sello, el mínimo que logre el contacto. En todo lo demás, 2 o 3 de 10.',
+  falla: 'Si falla una repetición del sello (el ojo se cierra o el sello se abre): suelta, respira 3 veces y repite una sola vez, más suave. Si vuelve a fallar, ese ejercicio terminó por este bloque.',
+  excepcion: 'Vocales «i-u»: sin reintento. Si el ojo se cierra incluso con la «u» suave, suspende ese ejercicio. En las frases: más lento, no más fuerte.',
+  suficiente: 'Terminaste cuando acabas las series del bloque o cuando un ejercicio te pide parar. Hacer más no suma.',
   bajar: 'Si pierdes calidad antes de lo normal dos bloques seguidos, el ojo se cierra más en el video, la cara amanece cansada o tensa, o hay dolor: quita una serie por ejercicio o vuelve al nivel anterior durante 3 días.',
   noHacer: [
     'Masticar chicle.',
@@ -216,4 +216,4 @@ const FACIAL_GUIA = {
   ]
 };
 
-if (typeof module !== 'undefined') module.exports = { FACIAL_EJ, FACIAL_BLOQUES, FACIAL_GUIA };
+if (typeof module !== 'undefined') module.exports = { FACIAL_EJ, FACIAL_BLOQUES, FACIAL_REF, FACIAL_GUIA };
