@@ -17,6 +17,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="ejercicio.css">
+<link rel="stylesheet" href="facial.css">
 </head>
 <body>
 
@@ -33,6 +34,7 @@
     <div class="vistas-in" role="tablist">
       <button class="vista" type="button" role="tab" data-vista="rutina" aria-selected="true">Rutina</button>
       <button class="vista" type="button" role="tab" data-vista="ejercicio" aria-selected="false" aria-controls="ejercicio" tabindex="-1">Ejercicio</button>
+      <button class="vista" type="button" role="tab" data-vista="facial" aria-selected="false" aria-controls="facial" tabindex="-1">Rutina facial</button>
     </div>
   </nav>
 </header>
@@ -127,11 +129,16 @@
 
 <main class="ej" id="ejercicio" role="tabpanel" aria-label="Ejercicio" hidden></main>
 
+<main class="fa" id="facial" role="tabpanel" aria-label="Rutina facial" hidden></main>
+
 <script src="rutina.js"></script>
 <script src="app.js"></script>
 <script src="push-config.js"></script>
 <script src="avisos.js"></script>
 <script src="ejercicio-datos.js"></script>
 <script src="ejercicio.js"></script>
+<script src="facial-datos.js"></script>
+<script src="facial.js"></script>
+<script src="vistas.js"></script>
 </body>
 </html>

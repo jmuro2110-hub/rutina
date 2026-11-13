@@ -1,23 +1,17 @@
 /* ============================================================
-   EJERCICIO — navegación Rutina / Ejercicio y guía de entreno
+   EJERCICIO — guía de entreno
    ------------------------------------------------------------
    Independiente de la Rutina: no usa sus variables, no toca su
    guardado (localStorage) y no cambia su día seleccionado.
-   Cambiar de pestaña solo oculta/muestra cada sección, así la
-   Rutina queda exactamente como la dejaste.
+   Las pestañas (mostrar/ocultar cada sección) están en vistas.js.
    ============================================================ */
 
 (function () {
   'use strict';
 
   const DIAS = EJERCICIO_DIAS;
-  const rutina = document.querySelector('main.wrap');
   const vista = document.getElementById('ejercicio');
-  const pestanas = Array.prototype.slice.call(document.querySelectorAll('.vistas [data-vista]'));
-  if (!rutina || !vista || !pestanas.length) return;
-
-  let actual = 'rutina';
-  const scroll = { rutina: 0, ejercicio: 0 };
+  if (!vista) return;
 
   /* ---------- día de la semana (hora de Ciudad de México) ---------- */
   function wdHoy() {
@@ -108,33 +102,8 @@
     });
   });
 
-  /* ---------- pestañas Rutina / Ejercicio ---------- */
-  function mostrar(v) {
-    if (v === actual) return;
-    scroll[actual] = window.scrollY || window.pageYOffset || 0;
-    actual = v;
-    const ej = v === 'ejercicio';
-    if (ej) pintar();                       // refresca el punto de "hoy"
-    rutina.hidden = ej;
-    vista.hidden = !ej;
-    document.documentElement.classList.toggle('v-ej', ej);
-    pestanas.forEach(t => {
-      const sel = t.dataset.vista === v;
-      t.setAttribute('aria-selected', sel ? 'true' : 'false');
-      t.tabIndex = sel ? 0 : -1;
-    });
-    window.scrollTo(0, scroll[v]);
-  }
-
-  pestanas.forEach(t => {
-    t.addEventListener('click', () => mostrar(t.dataset.vista));
-    t.addEventListener('keydown', e => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      e.preventDefault();
-      const otra = pestanas.find(x => x !== t);
-      otra.focus(); mostrar(otra.dataset.vista);
-    });
-  });
+  /* al abrir la pestaña (vistas.js), refresca el punto de "hoy" */
+  document.addEventListener('vista:mostrar', e => { if (e.detail === 'ejercicio') pintar(); });
 
   pintar();
 })();

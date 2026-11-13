@@ -1,6 +1,6 @@
 // Service worker: guarda tu rutina en el teléfono para que abra sin internet
 // y muestra las notificaciones que manda el servidor de avisos.
-const CACHE = 'rutina-v5';
+const CACHE = 'rutina-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,10 @@ const ASSETS = [
   './ejercicio.css',
   './ejercicio-datos.js',
   './ejercicio.js',
+  './facial.css',
+  './facial-datos.js',
+  './facial.js',
+  './vistas.js',
   './manifest.json',
   './icon-180.png',
   './icon-192.png',
