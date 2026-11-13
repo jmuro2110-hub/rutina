@@ -117,7 +117,7 @@ const FACIAL_EJ = {
 const FACIAL_BLOQUES = [
   {
     k: 'A', corto: 'Mañana', nombre: 'Bloque A · mañana',
-    meta: '≈ 11 min según el PDF · ≈ 1.5 min de movimiento activo',
+    meta: '2 ejercicios',
     nota: 'El día que grabes tu video semanal, el PDF indica saltarte este bloque y hacer solo el B.',
     intro: true,
     lista: [
@@ -127,7 +127,7 @@ const FACIAL_BLOQUES = [
   },
   {
     k: 'B', corto: 'Tarde', nombre: 'Bloque B · tarde o noche',
-    meta: '≈ 11 min según el PDF · ≈ 3.5 min de movimiento activo',
+    meta: '4 ejercicios',
     nota: 'Unas 4 h después del A (una propuesta del PDF, no un dato probado). El día de grabación, graba primero, en fresco.',
     intro: true,
     lista: [
