@@ -6,7 +6,7 @@
 <title>Rutina de JP</title>
 <meta name="description" content="Rutina diaria de JP">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0B">
+<meta name="theme-color" content="#0B0D12">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -16,6 +16,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="ejercicio.css">
 </head>
 <body>
 
@@ -28,6 +29,12 @@
     <div class="clock num" id="reloj" aria-label="Hora en Ciudad de México">--:--</div>
     <button class="bell" id="avBell" type="button" aria-label="Notificaciones" aria-controls="panelAvisos"></button>
   </div>
+  <nav class="vistas" aria-label="Secciones">
+    <div class="vistas-in" role="tablist">
+      <button class="vista" type="button" role="tab" data-vista="rutina" aria-selected="true">Rutina</button>
+      <button class="vista" type="button" role="tab" data-vista="ejercicio" aria-selected="false" aria-controls="ejercicio" tabindex="-1">Ejercicio</button>
+    </div>
+  </nav>
 </header>
 
 <main class="wrap">
@@ -84,34 +91,6 @@
     </div>
     <ol class="line" id="linea"></ol>
 
-    <details class="panel">
-      <summary>
-        <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="5"/></svg></span>
-        <span class="grow">Anclas y contingencias</span>
-        <span class="cr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
-      </summary>
-      <div class="in">
-        <h4>Anclas duras</h4>
-        <ul id="anclas"></ul>
-        <h4>Si algo sale mal</h4>
-        <ul>
-          <li><b>Vas 30 min tarde:</b> recorta tiempo libre; nunca el bloque profundo ni las tareas.</li>
-          <li><b>Si algo se alarga:</b> usa primero el margen que haya, después tiempo libre; nunca sacrifiques comida ni sueño.</li>
-          <li><b>Pierdes 1 hora:</b> salva clases, fisio, comidas, tareas y 60 min de habilidad, en ese orden.</li>
-          <li><b>La fisio cae a otra hora:</b> sigue siendo dentro de la ventana; lo que sobre de la ventana es margen. No muevas la comida ni las tareas.</li>
-          <li><b>Las tareas no caben:</b> lo pendiente pasa al siguiente bloque de tareas, nunca al de habilidad.</li>
-          <li><b>Muy cansado:</b> anclas + comidas + 1 bloque corto. El entreno se salta, la fisio no. El reset de casa baja a 10 min (platos y basura), pero no se salta.</li>
-        </ul>
-        <h4>Fin de semana</h4>
-        <ul>
-          <li><b>Sábado más relajado:</b> deja solo el bloque profundo de la mañana (60–90 min) y quita el bloque 2.</li>
-          <li>Uno de los dos días del finde, capricho a domicilio: esa noche no cocinas.</li>
-          <li>Sábado: limpieza + lavandería. Domingo: súper y plan de comidas de la semana.</li>
-        </ul>
-        <div class="legend" id="leyenda"></div>
-      </div>
-    </details>
-
     <details class="panel" id="panelAvisos">
       <summary>
         <span class="ic" id="avIc"></span>
@@ -139,16 +118,20 @@
 
     <p class="foot">
       Entreno: martes · jueves · sábado · domingo<br>
-      Fisio: lunes a viernes, hora variable <span id="footFisio"></span><br>
+      Ejercicios de cara: lunes a viernes, <span id="footCara"></span><br>
       El progreso se reinicia solo cada día (hora de Ciudad de México)
     </p>
   </div>
 
 </main>
 
+<main class="ej" id="ejercicio" role="tabpanel" aria-label="Ejercicio" hidden></main>
+
 <script src="rutina.js"></script>
 <script src="app.js"></script>
 <script src="push-config.js"></script>
 <script src="avisos.js"></script>
+<script src="ejercicio-datos.js"></script>
+<script src="ejercicio.js"></script>
 </body>
 </html>

@@ -53,7 +53,7 @@
 
   /* ---------- lo que se manda al servidor ---------- */
   function detalle(b) {
-    if (b.variable) return 'Horario variable · ' + VENTANA_FISIO;
+    if (b.variable) return 'Horario variable · ' + fmt(b.s) + '–' + fmt(b.e);
     return fmt(b.s) + '–' + fmt(b.e) + (b.sub && b.sub.length <= 70 ? ' · ' + b.sub : '');
   }
   function horario() {

@@ -70,6 +70,7 @@ const ICONOS = {
   birrete: '<path d="M2.5 9L12 4.5 21.5 9 12 13.5 2.5 9z"/><path d="M6.5 11v4.6c1.6 1.3 3.5 2 5.5 2s3.9-.7 5.5-2V11"/>',
   pasos:   '<circle cx="13.5" cy="4.5" r="1.8"/><path d="M8.5 21l2.3-6.2 3.2 2.7V21M10.8 14.8l1.2-5.3 3 2.8h3.2M12 9.5l-3.3 1.2L7 13.5"/>',
   pulso:   '<path d="M3 12h4l2.2-5.5 4.3 11 2.3-5.5H21"/>',
+  cara:    '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.5c1.9 2 5.1 2 7 0"/><path d="M9 9.8v.4M15 9.8v.4" stroke-width="2.4"/>',
   pesa:    '<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
   casa:    '<path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
   taza:    '<path d="M4 9.5h12V14a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9.5z"/><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M12 3.5v2.5"/>',
@@ -188,32 +189,7 @@ $('#linea').addEventListener('click', e => {
   if (t) alternar(parseInt(t.dataset.s, 10));
 });
 
-/* ---------- leyenda y anclas ---------- */
-(function leyenda() {
-  const el = $('#leyenda');
-  LEYENDA.forEach(c => {
-    const s = document.createElement('span');
-    s.innerHTML = '<i style="background:' + CAT[c].c + '"></i>' + CAT[c].l;
-    el.appendChild(s);
-  });
-})();
-
-(function anclas() {
-  const rango = (dia, nombre) => {
-    const b = DIAS[dia].bloques.find(x => x.a === nombre);
-    return b ? fmt(b.s) + '–' + fmt(b.e) : '';
-  };
-  const el = $('#anclas');
-  const li = html => { const l = document.createElement('li'); l.innerHTML = html; el.appendChild(l); };
-  li('Despertar <b>' + fmt(toMin(CONFIG.despertar)) + '</b> · dormido <b>' + fmt(toMin(CONFIG.dormido)) + '</b>');
-  li('Lunes a viernes: <b>ducha antes de clase</b>. Fin de semana: ducha después del entreno');
-  li('Fisio lunes a viernes · <b>hora variable</b> dentro de <b>' + VENTANA_FISIO + '</b>');
-  li('Robótica <b>miércoles ' + rango('miercoles', 'Robótica') + '</b> · Teatro <b>jueves ' + rango('jueves', 'Teatro') + '</b>');
-  li('<b>Tareas escolares</b> en su propio bloque; habilidad es solo habilidad');
-  li('<b>Lunes al despertar:</b> pesaje en ayunas antes del agua → Excel, y riega las 2 plantas');
-  li('Cena <b>' + fmt(toMin(CONFIG.cena)) + '</b> + reset de casa · lentes rojos <b>~' + LENTES + '</b> · celular lejos <b>' + CELULAR + '</b>');
-  $('#footFisio').textContent = '(' + VENTANA_FISIO + ')';
-})();
+$('#footCara').textContent = fmt(toMin(CONFIG.cara)) + '–' + fmt(toMin(CONFIG.cara) + 30);
 
 /* ---------- pintar ---------- */
 function pintar() {

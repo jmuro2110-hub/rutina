@@ -1,29 +1,30 @@
 /* ============================================================
    Rutina de JP — estilos
-   Tinta cálida + naranja (el del icono). Mobile-first (iPhone).
+   Azul medianoche + dorado. Mobile-first (iPhone).
    ============================================================ */
 
 :root {
   color-scheme: dark;
 
-  --bg:        #0A0A0B;
-  --bg-2:      #101012;
-  --surface:   #151517;
-  --surface-2: #1C1C1F;
-  --surface-3: #26262A;
-  --line:      rgba(255, 255, 255, .07);
-  --line-2:    rgba(255, 255, 255, .13);
+  --bg:        #0B0D12;
+  --bg-2:      #10131A;
+  --surface:   #151922;
+  --surface-2: #1C212C;
+  --surface-3: #272D3A;
+  --line:      rgba(200, 215, 255, .07);
+  --line-2:    rgba(200, 215, 255, .13);
 
-  --text:   #F5F4F0;
-  --text-2: #B3B1AB;
-  --text-3: #8C8A85;
+  --text:   #F1F3F8;
+  --text-2: #AEB4C2;
+  --text-3: #868D9C;
 
-  --accent:      #FF7A2F;
-  --accent-2:    #FFA46B;
-  --accent-soft: rgba(255, 122, 47, .13);
+  --accent:      #FFCB45;
+  --accent-2:    #FFDD85;
+  --accent-soft: rgba(255, 203, 69, .13);
+  --accent-ink:  #8A6200;   /* acento sobre fondo claro */
 
-  --ok:     #3DD68C;
-  --ok-ink: #04220F;
+  --ok:     #4ADE80;
+  --ok-ink: #052E14;
   --warn:   #F0A33A;
 
   --r-xl: 24px;
@@ -46,7 +47,7 @@ html { background: var(--bg); -webkit-text-size-adjust: 100%; text-size-adjust: 
 body {
   font-family: var(--sans);
   background:
-    radial-gradient(120% 50% at 50% -8%, rgba(255, 122, 47, .07), transparent 62%),
+    radial-gradient(120% 50% at 50% -8%, rgba(255, 203, 69, .07), transparent 62%),
     var(--bg);
   background-repeat: no-repeat;
   color: var(--text);
@@ -75,7 +76,7 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.9; strok
 /* ---------------- encabezado ---------------- */
 .top {
   position: sticky; top: 0; z-index: 40;
-  background: rgba(10, 10, 11, .78);
+  background: rgba(11, 13, 18, .78);
   backdrop-filter: saturate(170%) blur(20px);
   -webkit-backdrop-filter: saturate(170%) blur(20px);
   border-bottom: 1px solid var(--line);
@@ -132,15 +133,15 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.9; strok
 .day.hoy .n { color: var(--accent); }
 .day.hoy .dot { background: var(--accent); }
 .day[aria-selected="true"] { background: var(--text); }
-.day[aria-selected="true"] .l { color: rgba(10, 10, 11, .55); }
-.day[aria-selected="true"] .n { color: #0A0A0B; }
-.day[aria-selected="true"].hoy .n { color: #C24A0C; }
+.day[aria-selected="true"] .l { color: rgba(11, 13, 18, .55); }
+.day[aria-selected="true"] .n { color: var(--bg); }
+.day[aria-selected="true"].hoy .n { color: var(--accent-ink); }
 .day:active { transform: scale(.94); }
 
 .back {
   display: none; align-items: center; justify-content: center; gap: 6px;
   margin: 10px auto 0; min-height: 44px; padding: 0 18px 0 12px; cursor: pointer;
-  border-radius: 999px; border: 1px solid rgba(255, 122, 47, .32);
+  border-radius: 999px; border: 1px solid rgba(255, 203, 69, .32);
   background: var(--accent-soft); color: var(--accent-2);
   font-size: 14px; font-weight: 600;
 }
@@ -345,7 +346,7 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.9; strok
 .row.ventana.abierta .node .dot { box-shadow: 0 0 0 4px var(--bg), 0 0 0 5.5px var(--cat); }
 
 .row.k-sueno .item {
-  background: #14152A;
+  background: #181B33;
   background: color-mix(in srgb, var(--cat) 9%, var(--surface));
 }
 
@@ -435,10 +436,6 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.9; strok
 }
 .panel li b { color: var(--text); font-weight: 600; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 20px; }
-.legend span { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-2); }
-.legend i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-
 /* ---------------- notificaciones ---------------- */
 .pill {
   flex: none; font-size: 12px; font-weight: 650; padding: 3px 10px; border-radius: 99px;
@@ -474,7 +471,7 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.9; strok
 }
 .btn:active { transform: scale(.97); }
 .btn:disabled { opacity: .45; cursor: default; transform: none; }
-.btn.primary { flex: 1; background: var(--accent); color: #1B0B02; }
+.btn.primary { flex: 1; background: var(--accent); color: #1F1600; }
 .btn.primary.off { background: var(--surface-3); color: var(--text); }
 .btn.ghost { background: transparent; border-color: var(--line-2); color: var(--text); }
 .av-nota { font-size: 12.5px; color: var(--text-3); margin-top: 12px; line-height: 1.5; }

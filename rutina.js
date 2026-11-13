@@ -1,7 +1,7 @@
 /* ============================================================
    RUTINA DE JP — DATOS
    ------------------------------------------------------------
-   Horas base (despertar, dormido, ventana de la fisio) en CONFIG.
+   Horas base (despertar, dormido, cena, ejercicios de cara) en CONFIG.
    Cada día es una lista de pasos: duración (d) y, si es fijo,
    una hora ancla (at). Los pasos marcados flex (márgenes y
    tiempo libre) absorben el desfase: todo lo demás se acomoda solo.
@@ -12,11 +12,8 @@ const CONFIG = {
   dormido:   '23:00',
   cena:      '20:00',
 
-  // ---- FISIOTERAPIA (lunes a viernes, en casa) ----
-  // Una sola cita cuya hora exacta cambia cada día dentro de esta ventana.
-  fisio: {
-    ventana: ['11:30', '13:30']
-  }
+  // ---- EJERCICIOS DE CARA (lunes a viernes, media hora fija) ----
+  cara:      '11:30'
 };
 
 /* ---------- utilidades de tiempo ---------- */
@@ -30,26 +27,24 @@ const fmt = m => {
 const LENTES  = fmt(toMin(CONFIG.dormido) - 120);   // lentes rojos
 const CELULAR = fmt(toMin(CONFIG.dormido) - 30);    // celular lejos
 const SUENO   = 1440 - (toMin(CONFIG.dormido) - toMin(CONFIG.despertar));
-const VENTANA_FISIO = fmt(toMin(CONFIG.fisio.ventana[0])) + '–' + fmt(toMin(CONFIG.fisio.ventana[1]));
 
 /* ---------- categorías (c: color, l: etiqueta, i: icono) ---------- */
 const CAT = {
-  rutina:     { c: '#9B9A96', l: 'Rutina',       i: 'sol'      },
-  higiene:    { c: '#6FB6D9', l: 'Higiene',      i: 'gota'     },
-  transicion: { c: '#9B9A96', l: 'Transición',   i: 'luna'     },
-  comida:     { c: '#F0A33A', l: 'Comida',       i: 'plato'    },
-  habilidad:  { c: '#4F8BFF', l: 'Habilidad',    i: 'foco'     },
-  tareas:     { c: '#F25C6E', l: 'Tareas',       i: 'lapiz'    },
-  escuela:    { c: '#9C7BFF', l: 'Clase',        i: 'birrete'  },
-  fisica:     { c: '#2EC4B6', l: 'Físico',       i: 'pasos'    },
-  fisio:      { c: '#3DD68C', l: 'Fisio',        i: 'pulso'    },
-  entreno:    { c: '#FF7A2F', l: 'Entreno',      i: 'pesa'     },
-  casa:       { c: '#D4A373', l: 'Casa',         i: 'casa'     },
-  libre:      { c: '#8E8C87', l: 'Tiempo libre', i: 'taza'     },
-  margen:     { c: '#6B6A66', l: 'Margen',       i: 'pausa'    },
-  sueno:      { c: '#7C83DB', l: 'Sueño',        i: 'luna'     }
+  rutina:     { c: '#9AA3B5', l: 'Rutina',       i: 'sol'      },
+  higiene:    { c: '#4CC9F0', l: 'Higiene',      i: 'gota'     },
+  transicion: { c: '#9AA3B5', l: 'Transición',   i: 'luna'     },
+  comida:     { c: '#FF9A52', l: 'Comida',       i: 'plato'    },
+  habilidad:  { c: '#5B8CFF', l: 'Habilidad',    i: 'foco'     },
+  tareas:     { c: '#F472B6', l: 'Tareas',       i: 'lapiz'    },
+  escuela:    { c: '#A78BFA', l: 'Clase',        i: 'birrete'  },
+  fisica:     { c: '#2DD4BF', l: 'Físico',       i: 'pasos'    },
+  cara:       { c: '#4ADE80', l: 'Cara',         i: 'cara'     },
+  entreno:    { c: '#FF6A4D', l: 'Entreno',      i: 'pesa'     },
+  casa:       { c: '#D6A77A', l: 'Casa',         i: 'casa'     },
+  libre:      { c: '#8A91A0', l: 'Tiempo libre', i: 'taza'     },
+  margen:     { c: '#646B7A', l: 'Margen',       i: 'pausa'    },
+  sueno:      { c: '#8B93F8', l: 'Sueño',        i: 'luna'     }
 };
-const LEYENDA = ['escuela', 'tareas', 'habilidad', 'fisio', 'entreno', 'comida', 'casa', 'libre', 'rutina', 'sueno'];
 
 /* ---------- piezas reutilizables ---------- */
 const MARGEN = (d, a, min) => ({ d: d, a: a || 'Margen', c: 'margen', flex: true, min: min == null ? 0 : min });
@@ -76,22 +71,8 @@ const MANANA_CALMADA = (nota, extra) => ([
 
 const RECOGER = d => MARGEN(d, 'Pausa · recoge el desayuno', 5);
 
-// Fisio: UNA cita cuya hora exacta cambia cada día dentro de la ventana.
-// Es una "ventana": aparece como una sola actividad pero no ocupa tiempo en
-// la línea del día, así que las clases de esa franja siguen en su lugar.
-const FISIO = () => ({
-  at: CONFIG.fisio.ventana[0],
-  d: toMin(CONFIG.fisio.ventana[1]) - toMin(CONFIG.fisio.ventana[0]),
-  a: 'Fisioterapia', c: 'fisio', ventana: true, variable: true,
-  sub: 'Una sola cita · la hora exacta cambia cada día dentro de esta franja'
-});
-// huecos libres dentro de la ventana: margen donde puede caer la cita
-const MARGEN_FISIO = (d, desdeInicio) => {
-  const b = MARGEN(d, 'Margen · ventana de fisio');
-  b.sub = 'Tu cita de fisio puede caer aquí';
-  if (desdeInicio) b.at = CONFIG.fisio.ventana[0];
-  return b;
-};
+// Ejercicios de cara: media hora fija, de lunes a viernes.
+const CARA = () => ({ at: CONFIG.cara, d: 30, a: 'Ejercicios de cara', c: 'cara' });
 
 const COMER = () => ({ d: 60, a: 'Preparar + comer', c: 'comida', sub: 'Cocinas, comes y dejas la cocina lista' });
 const COLACION_1 = d => ({ d: d, a: 'Colación 1', c: 'comida', sub: '3 panes + crema de cacahuate' });
@@ -109,7 +90,6 @@ const ENTRENO = () => ([
 const NOCHE = notaCena => ([
   { at: CONFIG.cena, d: 60, a: 'Preparar + cenar', c: 'comida',
     sub: (notaCena ? notaCena + ' · ' : 'Cocinas, cenas y dejas la cocina lista · ') + 'lentes rojos ~' + LENTES },
-  { d: 20, a: 'Reset de casa', c: 'casa', sub: 'Platos, recoger, ropa, basura si toca · deja todo listo para mañana' },
   LIBRE(70),
   { at: CELULAR, d: 10, a: 'Celular lejos + cierre', c: 'transicion' },
   { d: 20, a: 'Rutina de noche + película', c: 'rutina' },
@@ -117,13 +97,12 @@ const NOCHE = notaCena => ([
     sub: 'Dormido a las ' + fmt(toMin(CONFIG.dormido)) + ' · despiertas ' + fmt(toMin(CONFIG.despertar)) }
 ]);
 
-const FINDE = semanal => ([
+const FINDE = () => ([
   { d: 100, a: 'Rutina mañana + desayuno', c: 'rutina', sub: 'Preparas y desayunas con calma · cocina lista' },
   { d: 90,  a: 'Habilidad — bloque profundo', c: 'habilidad' },
   LIBRE(60),
   COLACION_1(15),
-  semanal,
-  LIBRE(60),
+  LIBRE(120),
   COMER(),
   { d: 50,  a: 'Digestión · pausa', c: 'margen' },
   { d: 80,  a: 'Entreno (pesas)', c: 'entreno' },
@@ -140,11 +119,9 @@ const FINDE = semanal => ([
 const PLANTILLAS = {
 
   lunes: {
-    nombre: 'Lunes', corto: 'L', foco: 'Plantas + tareas', wd: [1],
+    nombre: 'Lunes', corto: 'L', foco: 'Tareas', wd: [1],
     pasos: () => [
-      ...MANANA_CALMADA('Pesaje en ayunas ANTES del agua → Excel · luego agua, pastilla, gotas', [
-        { d: 5, a: 'Regar plantas', c: 'casa', i: 'hoja', sub: 'Las 2 plantas, justo después de tu agua' }
-      ]),
+      ...MANANA_CALMADA('Pesaje en ayunas ANTES del agua → Excel · luego agua, pastilla, gotas'),
       MARGEN(5),
       { d: 60, a: 'Habilidad — bloque profundo', c: 'habilidad', sub: 'Tu mejor hora mental' },
       MARGEN(10, 'Margen · listo para clase'),
@@ -152,11 +129,10 @@ const PLANTILLAS = {
       { d: 40, a: 'Caminadora + agua · respiro', c: 'fisica', flex: true, min: 15 },
       { at: '10:50', d: 30, a: 'Lógica', c: 'escuela' },
       COLACION_1(10),
-      FISIO(),
-      MARGEN_FISIO(30, true),
+      CARA(),
       { at: '12:00', d: 30, a: 'Orientación', c: 'escuela' },
-      MARGEN_FISIO(60),
-      { at: CONFIG.fisio.ventana[1], ...COMER() },
+      LIBRE(60),
+      { at: '13:30', ...COMER() },
       TAREAS(90),
       MARGEN(20, 'Pausa', 5),
       HABILIDAD_2(),
@@ -176,8 +152,8 @@ const PLANTILLAS = {
       LIBRE(40),
       { at: '10:50', d: 30, a: 'Inglés', c: 'escuela' },
       COLACION_1(10),
-      FISIO(),
-      MARGEN_FISIO(80, true),
+      CARA(),
+      LIBRE(50),
       { at: '12:50', d: 30, a: 'Dibujo II', c: 'escuela' },
       COMER(),
       TAREAS(75, 'Solo escuela · de paso haces la digestión antes del entreno'),
@@ -201,10 +177,9 @@ const PLANTILLAS = {
       { d: 20, a: 'Caminadora + agua', c: 'fisica', flex: true, min: 10 },
       COLACION_1(15),
       LIBRE(45),
-      FISIO(),
-      MARGEN_FISIO(30, true),
+      CARA(),
       { at: '12:00', d: 30, a: 'Física III', c: 'escuela' },
-      MARGEN_FISIO(20),
+      LIBRE(20),
       { at: '12:50', d: 30, a: 'Francés', c: 'escuela' },
       COMER(),
       TAREAS(90),
@@ -225,13 +200,11 @@ const PLANTILLAS = {
       { at: '8:50', d: 30, a: 'Teatro', c: 'escuela' },
       MARGEN(5, 'Pausa', 5),
       { d: 60, a: 'Habilidad — bloque profundo', c: 'habilidad', sub: 'Tu mejor hora mental' },
-      MARGEN(5, 'Margen · listo para clase'),
-      { at: '10:30', d: 30, a: 'Computación', c: 'escuela' },
       COLACION_1(15),
-      LIBRE(15, null, 0),
-      FISIO(),
-      MARGEN_FISIO(120, true),
-      { at: CONFIG.fisio.ventana[1], ...COMER() },
+      LIBRE(50, null, 0),
+      CARA(),
+      LIBRE(90),
+      { at: '13:30', ...COMER() },
       TAREAS(75, 'Solo escuela · de paso haces la digestión antes del entreno'),
       MARGEN(10, 'Pausa · cámbiate', 5),
       ...ENTRENO(),
@@ -253,8 +226,8 @@ const PLANTILLAS = {
       { at: '10:30', d: 30, a: 'Geografía', c: 'escuela' },
       COLACION_1(15),
       LIBRE(15, null, 0),
-      FISIO(),
-      MARGEN_FISIO(80, true),
+      CARA(),
+      LIBRE(50),
       { at: '12:50', d: 30, a: 'Deportes', c: 'escuela' },
       COMER(),
       TAREAS(60, 'Solo escuela · cierra pendientes de la semana'),
@@ -267,14 +240,12 @@ const PLANTILLAS = {
   },
 
   sabado: {
-    nombre: 'Sábado', corto: 'S', foco: 'Entreno + limpieza', wd: [6], nota: true,
-    pasos: () => FINDE({ d: 60, a: 'Limpieza + lavandería', c: 'casa',
-                         sub: 'Semanal: baño, pisos, sábanas y una carga de ropa' })
+    nombre: 'Sábado', corto: 'S', foco: 'Entreno', wd: [6], nota: true,
+    pasos: () => FINDE()
   },
   domingo: {
-    nombre: 'Domingo', corto: 'D', foco: 'Entreno + súper', wd: [0], nota: true,
-    pasos: () => FINDE({ d: 60, a: 'Súper + plan de comidas', c: 'casa', i: 'bolsa',
-                         sub: 'Semanal: compras y qué vas a cocinar de lunes a viernes' })
+    nombre: 'Domingo', corto: 'D', foco: 'Entreno', wd: [0], nota: true,
+    pasos: () => FINDE()
   }
 };
 
@@ -371,5 +342,5 @@ ORDEN.forEach(k => DIAS[k].wd.forEach(w => { POR_WD[w] = k; }));
 const claveDe = b => (b.k != null ? b.k : b.s);
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { CONFIG, CAT, LEYENDA, DIAS, ORDEN, POR_WD, toMin, fmt, construirDia, PLANTILLAS, claveDe };
+  module.exports = { CONFIG, CAT, DIAS, ORDEN, POR_WD, toMin, fmt, construirDia, PLANTILLAS, claveDe };
 }
